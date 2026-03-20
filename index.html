@@ -8,7 +8,7 @@
 <meta name="apple-mobile-web-app-title" content="Shred Protocol">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link rel="manifest" href="manifest.json">
-<title>Shred Protocol — Final Plan</title>
+<title>Shred Protocol</title>
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
 body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #0f1117; color: #e8e0d0; }
@@ -17,11 +17,15 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; b
 .day-btn { flex: 1; padding: 10px; border-radius: 8px; border: 1px solid #2a3040; background: #1a1f2e; color: #7a8599; cursor: pointer; font-size: 14px; font-weight: 700; }
 .day-btn.active { background: #2a2010; color: #d4a853; border-color: #d4a853; }
 .card { background: #1a1f2e; border: 1px solid #2a3040; border-radius: 12px; margin-bottom: 10px; overflow: hidden; }
-.meal-header { padding: 14px 16px; cursor: pointer; display: flex; justify-content: space-between; align-items: flex-start; user-select: none; }
+.meal-header { padding: 14px 16px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; user-select: none; }
 .meal-header:hover { background: #22293a; }
 .meal-body { display: none; border-top: 1px solid #2a3040; padding: 14px 16px; }
 .meal-body.open { display: block; }
-.metric-card { background: #1a1f2e; border: 1px solid #2a3040; border-radius: 8px; padding: 10px 14px; }
+.metric-bar { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0; background: #1a1f2e; border: 1px solid #2a3040; border-radius: 10px; overflow: hidden; margin-bottom: 14px; }
+.metric-bar-item { padding: 12px 8px; text-align: center; border-right: 1px solid #2a3040; }
+.metric-bar-item:last-child { border-right: none; }
+.metric-bar-label { font-size: 10px; color: #5a6478; text-transform: uppercase; letter-spacing: .5px; margin-bottom: 2px; }
+.metric-bar-value { font-size: 20px; font-weight: 700; color: #d4a853; font-variant-numeric: tabular-nums; }
 .badge { display: inline-block; font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 6px; }
 .badge-amber { background: #2a2010; color: #d4a853; }
 .badge-blue { background: #0c1a2e; color: #5a9fd4; }
@@ -33,11 +37,6 @@ ul, ol { padding-left: 18px; }
 li { font-size: 13px; color: #b0a898; margin-bottom: 4px; line-height: 1.55; }
 .tip-box { font-size: 12px; color: #7a8599; background: #0f1117; border-radius: 8px; padding: 8px 12px; line-height: 1.6; margin-top: 10px; border: 1px solid #1e2535; }
 .chevron { font-size: 11px; color: #5a6478; margin-left: 8px; }
-.window-bar { display: flex; border-radius: 8px; overflow: hidden; height: 26px; font-size: 11px; font-weight: 600; }
-.win-fast { background: #1a1f2e; color: #5a6478; display: flex; align-items: center; justify-content: center; flex: 15; }
-.win-eat { background: #0a1f18; color: #5ad4a0; display: flex; align-items: center; justify-content: center; flex: 9; }
-.tl-dot { width: 10px; height: 10px; border-radius: 50%; margin: 0 auto 4px; }
-.tl-line { flex: 1; height: 1px; background: #2a3040; margin-top: -17px; }
 .grocery-row { display: flex; justify-content: space-between; align-items: center; padding: 11px 14px; margin-bottom: 6px; cursor: pointer; border-radius: 12px; border: 1px solid #2a3040; background: #1a1f2e; transition: opacity .2s; user-select: none; }
 .grocery-row:hover { background: #22293a; }
 .grocery-row.checked { opacity: .35; }
@@ -47,6 +46,22 @@ li { font-size: 13px; color: #b0a898; margin-bottom: 4px; line-height: 1.55; }
 .check-circle.done .check-tick { display: block; }
 .reset-btn { background: none; border: 1px solid #2a3040; border-radius: 8px; padding: 6px 14px; font-size: 12px; color: #7a8599; cursor: pointer; }
 .reset-btn:hover { background: #22293a; }
+
+/* Meal checkmarks */
+.meal-check { width: 24px; height: 24px; border-radius: 50%; border: 2px solid #3a4555; display: flex; align-items: center; justify-content: center; flex-shrink: 0; cursor: pointer; transition: all .2s; }
+.meal-check.eaten { background: #0a1f18; border-color: #1D9E75; }
+.meal-check-tick { display: none; width: 10px; height: 6px; border-left: 2.5px solid #5ad4a0; border-bottom: 2.5px solid #5ad4a0; transform: rotate(-45deg) translate(1px,-1px); }
+.meal-check.eaten .meal-check-tick { display: block; }
+.meal-card-eaten { opacity: .45; }
+
+/* Pie chart */
+.pie-chart-wrap { display: flex; align-items: center; gap: 16px; margin-bottom: 14px; }
+.pie-svg { width: 110px; height: 110px; flex-shrink: 0; }
+.pie-legend { flex: 1; }
+.pie-legend-row { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; font-size: 13px; }
+.pie-legend-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+.pie-legend-bar { flex: 1; height: 6px; border-radius: 3px; background: #1e2535; overflow: hidden; }
+.pie-legend-fill { height: 100%; border-radius: 3px; transition: width .3s; }
 
 /* Budget tab styles */
 .budget-summary-card { background: #1a1f2e; border: 1px solid #2a3040; border-radius: 12px; padding: 18px; margin-bottom: 14px; }
@@ -92,29 +107,9 @@ li { font-size: 13px; color: #b0a898; margin-bottom: 4px; line-height: 1.55; }
 
 <div style="background:linear-gradient(135deg,#1a1f2e,#0f1117);border-bottom:1px solid #2a3040;padding:28px 24px 20px">
   <div style="max-width:720px;margin:0 auto">
-    <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
-      <span style="font-size:22px">⚡</span>
-      <h1 style="font-size:22px;font-weight:700;color:#f0e6c8">Shred Protocol — Final Plan</h1>
-    </div>
-    <p style="font-size:12px;color:#7a8599;letter-spacing:2px;text-transform:uppercase;margin-bottom:14px">Bangkok · 3-Day · ~1,700 kcal · 12:00–21:00 · Induction + Microwave + Olive Spray</p>
-    <div class="window-bar" style="margin-bottom:14px">
-      <div class="win-fast">fasting 9pm → 12pm</div>
-      <div class="win-eat">eating 12pm – 9pm</div>
-    </div>
-    <div style="display:flex;align-items:center;margin-bottom:16px">
-      <div style="flex:1;text-align:center"><div class="tl-dot" style="background:#854F0B"></div><div style="font-size:10px;color:#5a6478">12:00 PM</div><div style="font-size:11px;font-weight:700;color:#e8e0d0">Oats + whey</div><div style="font-size:10px;color:#5a6478">pre-gym</div></div>
-      <div class="tl-line"></div>
-      <div style="flex:1;text-align:center"><div class="tl-dot" style="background:#0C447C"></div><div style="font-size:10px;color:#5a6478">1–2 PM</div><div style="font-size:11px;font-weight:700;color:#e8e0d0">GYM</div><div style="font-size:10px;color:#5a6478">train</div></div>
-      <div class="tl-line"></div>
-      <div style="flex:1;text-align:center"><div class="tl-dot" style="background:#085041"></div><div style="font-size:10px;color:#5a6478">3:30 PM</div><div style="font-size:11px;font-weight:700;color:#e8e0d0">Cajun chicken</div><div style="font-size:10px;color:#5a6478">post-workout</div></div>
-      <div class="tl-line"></div>
-      <div style="flex:1;text-align:center"><div class="tl-dot" style="background:#712B13"></div><div style="font-size:10px;color:#5a6478">8:30 PM</div><div style="font-size:11px;font-weight:700;color:#e8e0d0">Steak + eggs</div><div style="font-size:10px;color:#5a6478">close window</div></div>
-    </div>
-    <div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px">
-      <div class="metric-card"><div style="font-size:10px;color:#5a6478;text-transform:uppercase;letter-spacing:1px">Meals/day</div><div style="font-size:18px;font-weight:700;color:#d4a853">3</div></div>
-      <div class="metric-card"><div style="font-size:10px;color:#5a6478;text-transform:uppercase;letter-spacing:1px">Daily kcal</div><div id="total-kcal" style="font-size:18px;font-weight:700;color:#d4a853">—</div></div>
-      <div class="metric-card"><div style="font-size:10px;color:#5a6478;text-transform:uppercase;letter-spacing:1px">Protein</div><div id="total-p" style="font-size:18px;font-weight:700;color:#d4a853">—</div></div>
-      <div class="metric-card"><div style="font-size:10px;color:#5a6478;text-transform:uppercase;letter-spacing:1px">Actual Cost</div><div id="total-cost" style="font-size:18px;font-weight:700;color:#d4a853">—</div></div>
+    <div style="display:flex;align-items:center;gap:10px">
+      <span style="font-size:24px">⚡</span>
+      <h1 style="font-size:22px;font-weight:700;color:#f0e6c8">Shred Protocol</h1>
     </div>
   </div>
 </div>
@@ -123,7 +118,7 @@ li { font-size: 13px; color: #b0a898; margin-bottom: 4px; line-height: 1.55; }
   <div style="max-width:720px;margin:0 auto;display:flex;overflow-x:auto;-webkit-overflow-scrolling:touch">
     <button class="tab-btn active" onclick="showTab('plan',this)">🗓 Plan</button>
     <button class="tab-btn" onclick="showTab('grocery',this)">🛒 Grocery</button>
-<button class="tab-btn" onclick="showTab('budget',this)">💰 Budget</button>
+    <button class="tab-btn" onclick="showTab('budget',this)">💰 Budget</button>
   </div>
 </div>
 
@@ -152,7 +147,7 @@ li { font-size: 13px; color: #b0a898; margin-bottom: 4px; line-height: 1.55; }
     </div>
     <div id="grocery-content"></div>
   </div>
-<div id="tab-budget" style="display:none">
+  <div id="tab-budget" style="display:none">
     <div id="budget-content"></div>
   </div>
 </div>
@@ -259,7 +254,6 @@ function renderGrocery(){
           <div style="min-width:0">
             <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
               <span id="name-${item.id}" style="font-size:14px;font-weight:600;color:#e8e0d0">${item.name}</span>
-              ${item.real?'<span class="real-badge">real price</span>':''}
             </div>
             <div style="font-size:12px;color:#5a6478;margin-top:2px">${item.qty} · ${item.note}</div>
           </div>
@@ -282,19 +276,117 @@ function toggleMeal(id){
   chev.textContent=open?'▼':'▲';
 }
 
-function renderDay(i){
-  let html=`<div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-bottom:14px">
-    <div class="metric-card"><div style="font-size:10px;color:#5a6478">kcal</div><div style="font-size:16px;font-weight:700;color:#d4a853">${total.kcal}</div></div>
-    <div class="metric-card"><div style="font-size:10px;color:#5a6478">protein</div><div style="font-size:16px;font-weight:700;color:#5a9fd4">${total.p}g</div></div>
-    <div class="metric-card"><div style="font-size:10px;color:#5a6478">carbs</div><div style="font-size:16px;font-weight:700;color:#5ad4a0">${total.c}g</div></div>
-    <div class="metric-card"><div style="font-size:10px;color:#5a6478">fat</div><div style="font-size:16px;font-weight:700;color:#d47a5a">${total.f}g</div></div>
+// ============================================================
+// MEAL TRACKING (checkmarks + pie chart)
+// ============================================================
+function getEatenKey(dayIndex){
+  return 'eaten_day_' + dayIndex;
+}
+
+function getEatenMeals(dayIndex){
+  return JSON.parse(localStorage.getItem(getEatenKey(dayIndex)) || '[]');
+}
+
+function setEatenMeals(dayIndex, eaten){
+  localStorage.setItem(getEatenKey(dayIndex), JSON.stringify(eaten));
+}
+
+function toggleEaten(mealKey, dayIndex){
+  let eaten = getEatenMeals(dayIndex);
+  if(eaten.includes(mealKey)){
+    eaten = eaten.filter(k => k !== mealKey);
+  } else {
+    eaten.push(mealKey);
+  }
+  setEatenMeals(dayIndex, eaten);
+  renderDay(dayIndex);
+}
+
+function getCurrentDayIndex(){
+  const btns = document.querySelectorAll('.day-btn');
+  for(let i = 0; i < btns.length; i++){
+    if(btns[i].classList.contains('active')) return i;
+  }
+  return 0;
+}
+
+function buildPieChart(eaten, dayIndex){
+  const eatenMeals = meals.filter(m => eaten.includes(m.key));
+  const consumedKcal = eatenMeals.reduce((s,m) => s + m.kcal, 0);
+  const consumedP = eatenMeals.reduce((s,m) => s + m.p, 0);
+  const consumedC = eatenMeals.reduce((s,m) => s + m.c, 0);
+  const consumedF = eatenMeals.reduce((s,m) => s + m.f, 0);
+  const remainKcal = total.kcal - consumedKcal;
+
+  // Pie chart segments: consumed vs remaining kcal
+  const pct = total.kcal > 0 ? (consumedKcal / total.kcal) * 100 : 0;
+  const pctP = total.p > 0 ? (consumedP / total.p) * 100 : 0;
+  const pctC = total.c > 0 ? (consumedC / total.c) * 100 : 0;
+  const pctF = total.f > 0 ? (consumedF / total.f) * 100 : 0;
+
+  // SVG donut
+  const r = 42, cx = 55, cy = 55, circ = 2 * Math.PI * r;
+  const eaten_dash = (pct / 100) * circ;
+  const remain_dash = circ - eaten_dash;
+
+  let html = '<div class="pie-chart-wrap">';
+  html += `<svg class="pie-svg" viewBox="0 0 110 110">
+    <circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="#1e2535" stroke-width="14"/>
+    <circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="#d4a853" stroke-width="14"
+      stroke-dasharray="${eaten_dash} ${remain_dash}" stroke-dashoffset="${circ * 0.25}" stroke-linecap="round"
+      style="transition:stroke-dasharray .4s"/>
+    <text x="${cx}" y="${cy - 6}" text-anchor="middle" fill="#e8e0d0" font-size="16" font-weight="700">${remainKcal}</text>
+    <text x="${cx}" y="${cy + 10}" text-anchor="middle" fill="#5a6478" font-size="9">kcal left</text>
+  </svg>`;
+
+  html += '<div class="pie-legend">';
+  // Protein
+  html += `<div class="pie-legend-row">
+    <span class="pie-legend-dot" style="background:#5a9fd4"></span>
+    <span style="color:#5a9fd4;font-weight:600;min-width:24px">${consumedP}g</span>
+    <div class="pie-legend-bar"><div class="pie-legend-fill" style="width:${pctP}%;background:#5a9fd4"></div></div>
+    <span style="color:#5a6478;font-size:11px">${total.p}g P</span>
   </div>`;
+  // Carbs
+  html += `<div class="pie-legend-row">
+    <span class="pie-legend-dot" style="background:#5ad4a0"></span>
+    <span style="color:#5ad4a0;font-weight:600;min-width:24px">${consumedC}g</span>
+    <div class="pie-legend-bar"><div class="pie-legend-fill" style="width:${pctC}%;background:#5ad4a0"></div></div>
+    <span style="color:#5a6478;font-size:11px">${total.c}g C</span>
+  </div>`;
+  // Fat
+  html += `<div class="pie-legend-row">
+    <span class="pie-legend-dot" style="background:#d47a5a"></span>
+    <span style="color:#d47a5a;font-weight:600;min-width:24px">${consumedF}g</span>
+    <div class="pie-legend-bar"><div class="pie-legend-fill" style="width:${pctF}%;background:#d47a5a"></div></div>
+    <span style="color:#5a6478;font-size:11px">${total.f}g F</span>
+  </div>`;
+  html += '</div></div>';
+  return html;
+}
+
+function renderDay(i){
+  const eaten = getEatenMeals(i);
+
+  // Metric bar
+  let html = `<div class="metric-bar">
+    <div class="metric-bar-item"><div class="metric-bar-label">Kcal</div><div class="metric-bar-value">${total.kcal}</div></div>
+    <div class="metric-bar-item"><div class="metric-bar-label">Protein</div><div class="metric-bar-value">${total.p}g</div></div>
+    <div class="metric-bar-item"><div class="metric-bar-label">Meals</div><div class="metric-bar-value">${eaten.length} / 3</div></div>
+  </div>`;
+
+  // Pie chart
+  html += buildPieChart(eaten, i);
+
+  // Meal cards
   meals.forEach(m=>{
     const id=m.key+i;
     const ing=m.ingredients[i];
-    html+=`<div class="card">
-      <div class="meal-header" onclick="toggleMeal('${id}')">
-        <div style="flex:1">
+    const isEaten = eaten.includes(m.key);
+    html+=`<div class="card ${isEaten ? 'meal-card-eaten' : ''}">
+      <div class="meal-header">
+        <div class="meal-check ${isEaten ? 'eaten' : ''}" onclick="event.stopPropagation();toggleEaten('${m.key}',${i})"><div class="meal-check-tick"></div></div>
+        <div style="flex:1;margin-left:12px" onclick="toggleMeal('${id}')">
           <div style="display:flex;align-items:center;gap:6px;margin-bottom:4px">
             <span style="font-size:14px;font-weight:700;color:#e8e0d0">${m.label}</span>
             <span id="chev-${id}" class="chevron">▼</span>
@@ -524,9 +616,6 @@ function budgetNextMonth(){
 // ============================================================
 // INIT
 // ============================================================
-document.getElementById('total-kcal').textContent=total.kcal;
-document.getElementById('total-p').textContent=total.p+'g';
-document.getElementById('total-cost').textContent='฿'+actualTotal;
 renderDay(0); renderGrocery();
 
 // ============================================================
