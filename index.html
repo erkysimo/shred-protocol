@@ -47,30 +47,6 @@ li { font-size: 13px; color: #b0a898; margin-bottom: 4px; line-height: 1.55; }
 .check-circle.done .check-tick { display: block; }
 .reset-btn { background: none; border: 1px solid #2a3040; border-radius: 8px; padding: 6px 14px; font-size: 12px; color: #7a8599; cursor: pointer; }
 .reset-btn:hover { background: #22293a; }
-.real-badge { font-size: 10px; background: #0a1f18; color: #5ad4a0; border-radius: 4px; padding: 1px 6px; margin-left: 6px; font-weight: 700; }
-
-/* Scan tab styles */
-.scan-camera-btn { width: 100%; padding: 40px 20px; border-radius: 12px; border: 2px dashed #2a3040; background: #1a1f2e; color: #7a8599; font-size: 16px; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 10px; transition: border-color .2s, background .2s; }
-.scan-camera-btn:hover { border-color: #d4a853; background: #22293a; }
-.scan-camera-btn .cam-icon { font-size: 48px; }
-.scan-preview { max-width: 200px; border-radius: 8px; margin: 14px auto; display: block; border: 1px solid #2a3040; }
-.scan-analyze-btn { width: 100%; padding: 14px; border-radius: 10px; border: none; background: #d4a853; color: #0f1117; font-size: 15px; font-weight: 700; cursor: pointer; margin-bottom: 14px; }
-.scan-analyze-btn:hover { background: #e0b86a; }
-.scan-analyze-btn:disabled { opacity: .5; cursor: not-allowed; }
-.scan-spinner { display: inline-block; width: 18px; height: 18px; border: 2px solid #0f1117; border-top-color: transparent; border-radius: 50%; animation: spin .8s linear infinite; vertical-align: middle; margin-right: 8px; }
-@keyframes spin { to { transform: rotate(360deg); } }
-.scan-results-card { background: #1a1f2e; border: 1px solid #2a3040; border-radius: 12px; padding: 16px; margin-bottom: 14px; }
-.scan-item-row { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #1e2535; font-size: 14px; }
-.scan-item-row:last-child { border-bottom: none; }
-.scan-update-btn { width: 100%; padding: 12px; border-radius: 10px; border: none; background: #0a1f18; color: #5ad4a0; font-size: 14px; font-weight: 700; cursor: pointer; border: 1px solid #1D9E75; margin-bottom: 8px; }
-.scan-update-btn:hover { background: #0d2a20; }
-.scan-budget-btn { width: 100%; padding: 12px; border-radius: 10px; border: none; background: #2a2010; color: #d4a853; font-size: 14px; font-weight: 700; cursor: pointer; border: 1px solid #d4a853; margin-bottom: 8px; }
-.scan-budget-btn:hover { background: #352a15; }
-.api-key-modal { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,.7); display: flex; align-items: center; justify-content: center; z-index: 1000; }
-.api-key-box { background: #1a1f2e; border: 1px solid #2a3040; border-radius: 16px; padding: 24px; max-width: 360px; width: 90%; }
-.api-key-input { width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #2a3040; background: #0f1117; color: #e8e0d0; font-size: 14px; margin: 12px 0; }
-.api-key-save { width: 100%; padding: 12px; border-radius: 10px; border: none; background: #d4a853; color: #0f1117; font-size: 15px; font-weight: 700; cursor: pointer; }
-.change-key-link { font-size: 12px; color: #5a6478; text-align: center; cursor: pointer; margin-top: 14px; text-decoration: underline; }
 
 /* Budget tab styles */
 .budget-summary-card { background: #1a1f2e; border: 1px solid #2a3040; border-radius: 12px; padding: 18px; margin-bottom: 14px; }
@@ -147,8 +123,7 @@ li { font-size: 13px; color: #b0a898; margin-bottom: 4px; line-height: 1.55; }
   <div style="max-width:720px;margin:0 auto;display:flex;overflow-x:auto;-webkit-overflow-scrolling:touch">
     <button class="tab-btn active" onclick="showTab('plan',this)">🗓 Plan</button>
     <button class="tab-btn" onclick="showTab('grocery',this)">🛒 Grocery</button>
-    <button class="tab-btn" onclick="showTab('scan',this)">📷 Scan</button>
-    <button class="tab-btn" onclick="showTab('budget',this)">💰 Budget</button>
+<button class="tab-btn" onclick="showTab('budget',this)">💰 Budget</button>
   </div>
 </div>
 
@@ -164,7 +139,7 @@ li { font-size: 13px; color: #b0a898; margin-bottom: 4px; line-height: 1.55; }
   <div id="tab-grocery" style="display:none">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
       <div>
-        <div style="font-size:10px;color:#5a6478;text-transform:uppercase;letter-spacing:1px;margin-bottom:2px">Actual 3-Day Cost <span class="real-badge">from receipts</span></div>
+        <div style="font-size:10px;color:#5a6478;text-transform:uppercase;letter-spacing:1px;margin-bottom:2px">Actual 3-Day Cost</div>
         <div style="font-size:24px;font-weight:700;color:#d4a853" id="grocery-total">—</div>
       </div>
       <div style="display:flex;align-items:center;gap:10px">
@@ -177,10 +152,7 @@ li { font-size: 13px; color: #b0a898; margin-bottom: 4px; line-height: 1.55; }
     </div>
     <div id="grocery-content"></div>
   </div>
-  <div id="tab-scan" style="display:none">
-    <div id="scan-content"></div>
-  </div>
-  <div id="tab-budget" style="display:none">
+<div id="tab-budget" style="display:none">
     <div id="budget-content"></div>
   </div>
 </div>
@@ -319,7 +291,7 @@ function renderDay(i){
   </div>`;
   meals.forEach(m=>{
     const id=m.key+i;
-    const ing=getMealIngredients(meals.indexOf(m), i);
+    const ing=m.ingredients[i];
     html+=`<div class="card">
       <div class="meal-header" onclick="toggleMeal('${id}')">
         <div style="flex:1">
@@ -352,10 +324,9 @@ function renderDay(i){
 
 
 function showTab(tab,btn){
-  ['plan','grocery','scan','budget'].forEach(t=>document.getElementById('tab-'+t).style.display=t===tab?'block':'none');
+  ['plan','grocery','budget'].forEach(t=>document.getElementById('tab-'+t).style.display=t===tab?'block':'none');
   document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
   btn.classList.add('active');
-  if(tab==='scan') renderScanTab();
   if(tab==='budget') renderBudgetTab();
 }
 
@@ -363,283 +334,6 @@ function showDay(i,btn){
   document.querySelectorAll('.day-btn').forEach(b=>b.classList.remove('active'));
   btn.classList.add('active');
   renderDay(i);
-}
-
-// ============================================================
-// SCAN TAB — connected to Claude for auto-updating everything
-// ============================================================
-let scanImageData = null;
-let scanMediaType = null;
-let lastScanResults = null;
-
-// Plan ingredient overrides stored in localStorage
-function getPlanOverrides(){
-  return JSON.parse(localStorage.getItem('plan_overrides') || '{}');
-}
-function savePlanOverrides(o){
-  localStorage.setItem('plan_overrides', JSON.stringify(o));
-}
-function getMealIngredients(mealIndex, dayIndex){
-  const overrides = getPlanOverrides();
-  const key = meals[mealIndex].key + '_' + dayIndex;
-  return overrides[key] || meals[mealIndex].ingredients[dayIndex];
-}
-
-function buildScanSystemPrompt(){
-  const groceryNames = allItems.map(i => i.name).join(', ');
-  const mealInfo = meals.map(m => m.key + ': ' + m.ingredients[0].join(', ')).join('\n');
-  return `You are a smart receipt analyzer for a meal prep app called Shred Protocol. The user follows a 3-day meal plan in Bangkok.
-
-GROCERY LIST ITEMS: ${groceryNames}
-
-MEAL PLAN INGREDIENTS:
-${mealInfo}
-
-Analyze this Thai supermarket receipt. Return ONLY valid JSON, no markdown, no explanation.
-
-Format:
-{
-  "items": [{ "name": "item name in english", "price": 0.00 }],
-  "total": 0.00,
-  "grocery_updates": [{ "grocery_id": "g0", "new_price": 0, "new_qty": "qty text", "new_note": "store name" }],
-  "plan_updates": [{ "meal": "oats|cajun|steak", "days": [0,1,2], "ingredient_index": 0, "new_ingredient": "new text" }]
-}
-
-Rules for grocery_updates:
-- Match receipt items to grocery list items by name (fuzzy match OK)
-- Use these IDs: ${allItems.map(i => i.id + '=' + i.name).join(', ')}
-- Only include items that clearly match
-
-Rules for plan_updates:
-- If a receipt item is a substitution for a plan ingredient (e.g. pork instead of chicken, broccoli instead of green beans), suggest updating the ingredient
-- If the receipt shows a different quantity than planned, update the ingredient text
-- Only suggest changes when the receipt clearly shows a different item was bought for that meal slot
-- days array = which days to apply the change (0,1,2)
-- ingredient_index = position in the ingredients array for that meal
-
-If no plan changes are needed, return empty plan_updates array.`;
-}
-
-function renderScanTab(){
-  const hasKey = !!localStorage.getItem('anthropic_key');
-  if(!hasKey) showApiKeyModal();
-  let html = '';
-  html += `<input type="file" id="scan-file-input" accept="image/*" capture="environment" style="display:none" onchange="handleScanFile(this)">`;
-  html += `<button class="scan-camera-btn" onclick="document.getElementById('scan-file-input').click()">
-    <span class="cam-icon">📷</span>
-    <span>Tap to scan a receipt</span>
-  </button>`;
-  html += `<div id="scan-preview-area"></div>`;
-  html += `<div id="scan-results-area"></div>`;
-  html += `<div class="change-key-link" onclick="showApiKeyModal()">Change API Key</div>`;
-  document.getElementById('scan-content').innerHTML = html;
-}
-
-function showApiKeyModal(){
-  const existing = document.getElementById('api-key-modal');
-  if(existing) existing.remove();
-  const modal = document.createElement('div');
-  modal.className = 'api-key-modal';
-  modal.id = 'api-key-modal';
-  const currentKey = localStorage.getItem('anthropic_key') || '';
-  modal.innerHTML = `<div class="api-key-box">
-    <div style="font-size:16px;font-weight:700;color:#e8e0d0;margin-bottom:4px">Anthropic API Key</div>
-    <div style="font-size:13px;color:#7a8599">Enter your API key to use receipt scanning</div>
-    <input class="api-key-input" id="api-key-field" type="password" placeholder="sk-ant-..." value="${currentKey}">
-    <button class="api-key-save" onclick="saveApiKey()">Save</button>
-    <div style="text-align:center;margin-top:10px"><span style="font-size:13px;color:#5a6478;cursor:pointer" onclick="document.getElementById('api-key-modal').remove()">Cancel</span></div>
-  </div>`;
-  document.body.appendChild(modal);
-}
-
-function saveApiKey(){
-  const key = document.getElementById('api-key-field').value.trim();
-  if(key){ localStorage.setItem('anthropic_key', key); }
-  document.getElementById('api-key-modal').remove();
-}
-
-function handleScanFile(input){
-  const file = input.files[0];
-  if(!file) return;
-  const reader = new FileReader();
-  reader.onload = function(e){
-    const dataUrl = e.target.result;
-    const parts = dataUrl.split(',');
-    scanImageData = parts[1];
-    const mimeMatch = parts[0].match(/data:(.*?);/);
-    scanMediaType = mimeMatch ? mimeMatch[1] : 'image/jpeg';
-    const preview = document.getElementById('scan-preview-area');
-    preview.innerHTML = `<img src="${dataUrl}" class="scan-preview">
-      <button class="scan-analyze-btn" id="scan-analyze-btn" onclick="analyzeReceipt()">Analyze Receipt</button>`;
-    document.getElementById('scan-results-area').innerHTML = '';
-    lastScanResults = null;
-  };
-  reader.readAsDataURL(file);
-}
-
-async function analyzeReceipt(){
-  const key = localStorage.getItem('anthropic_key');
-  if(!key){ showApiKeyModal(); return; }
-  const btn = document.getElementById('scan-analyze-btn');
-  btn.disabled = true;
-  btn.innerHTML = '<span class="scan-spinner"></span>Reading receipt...';
-  document.getElementById('scan-results-area').innerHTML = '';
-  try {
-    const resp = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-api-key': key,
-        'anthropic-version': '2023-06-01',
-        'anthropic-dangerous-direct-browser-access': 'true'
-      },
-      body: JSON.stringify({
-        model: 'claude-sonnet-4-20250514',
-        max_tokens: 2048,
-        system: buildScanSystemPrompt(),
-        messages: [{
-          role: 'user',
-          content: [
-            { type: 'image', source: { type: 'base64', media_type: scanMediaType, data: scanImageData } },
-            { type: 'text', text: 'Analyze this receipt. Match items to my grocery list and meal plan. Return the structured JSON.' }
-          ]
-        }]
-      })
-    });
-    const data = await resp.json();
-    if(data.error) throw new Error(data.error.message);
-    const text = data.content[0].text;
-    const parsed = JSON.parse(text);
-    lastScanResults = parsed;
-    applyAllUpdates(parsed);
-  } catch(err) {
-    document.getElementById('scan-results-area').innerHTML = `<div class="card" style="padding:14px;color:#d47a5a;font-size:13px">Error: ${err.message}</div>`;
-    btn.disabled = false;
-    btn.innerHTML = 'Analyze Receipt';
-  }
-}
-
-function applyAllUpdates(parsed){
-  const items = parsed.items || [];
-  const groceryUpdates = parsed.grocery_updates || [];
-  const planUpdates = parsed.plan_updates || [];
-  const receiptTotal = parsed.total || items.reduce((s,i) => s + (i.price||0), 0);
-
-  // 1. Update grocery prices
-  let groceryCount = 0;
-  groceryUpdates.forEach(gu => {
-    const item = allItems.find(i => i.id === gu.grocery_id);
-    if(item){
-      if(gu.new_price != null) item.price = Math.round(gu.new_price);
-      if(gu.new_qty) item.qty = gu.new_qty;
-      item.note = gu.new_note || 'Updated from receipt scan';
-      item.real = true;
-      groceryCount++;
-    }
-  });
-  if(groceryCount > 0){
-    renderGrocery();
-    const newTotal = allItems.reduce((s,i) => s + i.price, 0);
-    document.getElementById('total-cost').textContent = '฿' + newTotal;
-  }
-
-  // 2. Update meal plan ingredients
-  let planCount = 0;
-  if(planUpdates.length > 0){
-    const overrides = getPlanOverrides();
-    planUpdates.forEach(pu => {
-      const mealIdx = meals.findIndex(m => m.key === pu.meal);
-      if(mealIdx === -1) return;
-      const days = pu.days || [0,1,2];
-      days.forEach(d => {
-        const key = meals[mealIdx].key + '_' + d;
-        if(!overrides[key]) overrides[key] = [...meals[mealIdx].ingredients[d]];
-        if(pu.ingredient_index >= 0 && pu.ingredient_index < overrides[key].length){
-          overrides[key][pu.ingredient_index] = pu.new_ingredient;
-          planCount++;
-        }
-      });
-    });
-    savePlanOverrides(overrides);
-    // Re-render current day
-    const activeDay = document.querySelector('.day-btn.active');
-    const dayIdx = activeDay ? [...document.querySelectorAll('.day-btn')].indexOf(activeDay) : 0;
-    renderDay(dayIdx);
-  }
-
-  // 3. Auto-log to budget
-  const today = new Date().toISOString().split('T')[0];
-  const entries = JSON.parse(localStorage.getItem('budget_entries') || '[]');
-  entries.push({
-    id: Date.now().toString(),
-    date: today,
-    amount: Math.round(receiptTotal),
-    note: 'Receipt scan ' + today,
-    items: items.map(i => i.name)
-  });
-  localStorage.setItem('budget_entries', JSON.stringify(entries));
-
-  // 4. Render summary
-  renderScanSummary(items, receiptTotal, groceryCount, planCount, planUpdates);
-}
-
-function renderScanSummary(items, total, groceryCount, planCount, planUpdates){
-  let html = '';
-
-  // Receipt items card
-  html += '<div class="scan-results-card">';
-  html += '<div style="font-size:11px;color:#5a6478;font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px">Receipt Items</div>';
-  items.forEach(item => {
-    html += `<div class="scan-item-row"><span style="color:#e8e0d0">${item.name}</span><span style="color:#d4a853;font-weight:700">฿${(item.price||0).toFixed(0)}</span></div>`;
-  });
-  html += `<div style="border-top:1px solid #2a3040;margin-top:8px;padding-top:8px;display:flex;justify-content:space-between;font-weight:700">
-    <span style="color:#e8e0d0">Total</span><span style="color:#d4a853">฿${Math.round(total)}</span></div>`;
-  html += '</div>';
-
-  // Auto-update summary
-  html += '<div style="font-size:11px;color:#5a6478;font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin:14px 0 8px">Auto-Updated</div>';
-
-  // Grocery update
-  html += `<div style="background:#0a1f18;border:1px solid #1D9E75;border-radius:10px;padding:12px 14px;margin-bottom:8px;display:flex;align-items:center;gap:10px">
-    <span style="font-size:20px">🛒</span>
-    <div><div style="font-size:14px;font-weight:600;color:#5ad4a0">Grocery List</div>
-    <div style="font-size:12px;color:#7a8599">${groceryCount > 0 ? groceryCount + ' price' + (groceryCount!==1?'s':'') + ' updated' : 'No matching items'}</div></div>
-  </div>`;
-
-  // Budget update
-  html += `<div style="background:#2a2010;border:1px solid #d4a853;border-radius:10px;padding:12px 14px;margin-bottom:8px;display:flex;align-items:center;gap:10px">
-    <span style="font-size:20px">💰</span>
-    <div><div style="font-size:14px;font-weight:600;color:#d4a853">Budget</div>
-    <div style="font-size:12px;color:#7a8599">Logged ฿${Math.round(total)} to this month</div></div>
-  </div>`;
-
-  // Plan update
-  if(planCount > 0){
-    html += `<div style="background:#0c1a2e;border:1px solid #5a9fd4;border-radius:10px;padding:12px 14px;margin-bottom:8px;display:flex;align-items:center;gap:10px">
-      <span style="font-size:20px">🗓</span>
-      <div><div style="font-size:14px;font-weight:600;color:#5a9fd4">Meal Plan</div>
-      <div style="font-size:12px;color:#7a8599">${planCount} ingredient${planCount!==1?'s':''} updated</div>
-      ${planUpdates.map(pu => `<div style="font-size:11px;color:#5a6478;margin-top:2px">• ${pu.meal}: ${pu.new_ingredient}</div>`).join('')}
-      </div>
-    </div>`;
-  } else {
-    html += `<div style="background:#0c1a2e;border:1px solid #5a9fd4;border-radius:10px;padding:12px 14px;margin-bottom:8px;display:flex;align-items:center;gap:10px">
-      <span style="font-size:20px">🗓</span>
-      <div><div style="font-size:14px;font-weight:600;color:#5a9fd4">Meal Plan</div>
-      <div style="font-size:12px;color:#7a8599">No changes needed</div></div>
-    </div>`;
-  }
-
-  // Scan another button
-  html += `<button class="scan-camera-btn" style="padding:16px;margin-top:10px" onclick="document.getElementById('scan-file-input').click()">
-    <span style="font-size:24px">📷</span><span>Scan another receipt</span>
-  </button>`;
-
-  document.getElementById('scan-results-area').innerHTML = html;
-
-  // Reset the analyze button
-  const btn = document.getElementById('scan-analyze-btn');
-  if(btn){ btn.disabled = false; btn.innerHTML = 'Analyze Receipt'; }
 }
 
 // ============================================================
