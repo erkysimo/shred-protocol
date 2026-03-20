@@ -148,7 +148,6 @@ li { font-size: 13px; color: #b0a898; margin-bottom: 4px; line-height: 1.55; }
     <button class="tab-btn active" onclick="showTab('plan',this)">🗓 Plan</button>
     <button class="tab-btn" onclick="showTab('grocery',this)">🛒 Grocery</button>
     <button class="tab-btn" onclick="showTab('scan',this)">📷 Scan</button>
-    <button class="tab-btn" onclick="showTab('tips',this)">💡 Tips</button>
     <button class="tab-btn" onclick="showTab('budget',this)">💰 Budget</button>
   </div>
 </div>
@@ -181,7 +180,6 @@ li { font-size: 13px; color: #b0a898; margin-bottom: 4px; line-height: 1.55; }
   <div id="tab-scan" style="display:none">
     <div id="scan-content"></div>
   </div>
-  <div id="tab-tips" style="display:none"><div id="tips-content"></div></div>
   <div id="tab-budget" style="display:none">
     <div id="budget-content"></div>
   </div>
@@ -303,7 +301,6 @@ function renderGrocery(){
   document.getElementById('grocery-total').textContent='฿'+actualTotal+' (~$'+(actualTotal/31).toFixed(0)+' USD)';
 }
 
-const tips=["You have an induction hob — it gets screaming hot instantly. Perfect for steak and chicken sear. Use max heat for both.","Always stir whey into warm oats AFTER microwaving. Never microwave the powder — it clumps and ruins the texture.","Eat meal 1 (oats + whey) 45–60 min before training. Carbs need time to digest.","Eat meal 2 (cajun chicken) within 30–60 min after training — your anabolic window. Most important meal of the day.","Meal 3 is low carb by design. Steak + eggs + avocado keeps insulin flat overnight while growth hormone peaks during sleep.","Batch cook on prep day: boil all sweet potato → cook all 3 chicken breasts. 40 min total. Only steak + eggs fresh each evening.","Pat all protein completely dry before the pan. Moisture = steam = grey meat. Dry = sear = crust and flavour.","DIY cajun mix takes 30 sec: paprika, garlic powder, onion powder, cayenne, salt, pepper. Make a big batch.","Moccona black coffee during the morning fast is perfect — no milk, no sugar. Helps suppress hunger and boosts fat oxidation.","Drink 3–3.5L water daily. Bangkok heat dehydrates fast."];
 
 function toggleMeal(id){
   const body=document.getElementById('body-'+id);
@@ -353,12 +350,9 @@ function renderDay(i){
   document.getElementById('day-content').innerHTML=html;
 }
 
-function renderTips(){
-  document.getElementById('tips-content').innerHTML=tips.map(t=>`<div class="card" style="font-size:13px;color:#b0a898;line-height:1.6;margin-bottom:8px;padding:12px 14px">${t}</div>`).join('');
-}
 
 function showTab(tab,btn){
-  ['plan','grocery','scan','tips','budget'].forEach(t=>document.getElementById('tab-'+t).style.display=t===tab?'block':'none');
+  ['plan','grocery','scan','budget'].forEach(t=>document.getElementById('tab-'+t).style.display=t===tab?'block':'none');
   document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
   btn.classList.add('active');
   if(tab==='scan') renderScanTab();
@@ -839,7 +833,7 @@ function budgetNextMonth(){
 document.getElementById('total-kcal').textContent=total.kcal;
 document.getElementById('total-p').textContent=total.p+'g';
 document.getElementById('total-cost').textContent='฿'+actualTotal;
-renderDay(0); renderGrocery(); renderTips();
+renderDay(0); renderGrocery();
 
 // ============================================================
 // SERVICE WORKER
