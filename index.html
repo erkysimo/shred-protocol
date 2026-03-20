@@ -1,0 +1,883 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Shred Protocol">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="manifest" href="manifest.json">
+<title>Shred Protocol — Final Plan</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #0f1117; color: #e8e0d0; }
+.tab-btn { background: none; border: none; border-bottom: 2px solid transparent; padding: 12px 18px; cursor: pointer; font-size: 13px; color: #7a8599; font-weight: 600; letter-spacing: .05em; text-transform: uppercase; }
+.tab-btn.active { border-bottom-color: #d4a853; color: #d4a853; }
+.day-btn { flex: 1; padding: 10px; border-radius: 8px; border: 1px solid #2a3040; background: #1a1f2e; color: #7a8599; cursor: pointer; font-size: 14px; font-weight: 700; }
+.day-btn.active { background: #2a2010; color: #d4a853; border-color: #d4a853; }
+.card { background: #1a1f2e; border: 1px solid #2a3040; border-radius: 12px; margin-bottom: 10px; overflow: hidden; }
+.meal-header { padding: 14px 16px; cursor: pointer; display: flex; justify-content: space-between; align-items: flex-start; user-select: none; }
+.meal-header:hover { background: #22293a; }
+.meal-body { display: none; border-top: 1px solid #2a3040; padding: 14px 16px; }
+.meal-body.open { display: block; }
+.metric-card { background: #1a1f2e; border: 1px solid #2a3040; border-radius: 8px; padding: 10px 14px; }
+.badge { display: inline-block; font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 6px; }
+.badge-amber { background: #2a2010; color: #d4a853; }
+.badge-blue { background: #0c1a2e; color: #5a9fd4; }
+.badge-teal { background: #0a1f18; color: #5ad4a0; }
+.badge-coral { background: #2a1008; color: #d47a5a; }
+.section-label { font-size: 11px; font-weight: 700; color: #5a6478; text-transform: uppercase; letter-spacing: .05em; margin: 12px 0 6px; }
+.section-label:first-child { margin-top: 0; }
+ul, ol { padding-left: 18px; }
+li { font-size: 13px; color: #b0a898; margin-bottom: 4px; line-height: 1.55; }
+.tip-box { font-size: 12px; color: #7a8599; background: #0f1117; border-radius: 8px; padding: 8px 12px; line-height: 1.6; margin-top: 10px; border: 1px solid #1e2535; }
+.chevron { font-size: 11px; color: #5a6478; margin-left: 8px; }
+.window-bar { display: flex; border-radius: 8px; overflow: hidden; height: 26px; font-size: 11px; font-weight: 600; }
+.win-fast { background: #1a1f2e; color: #5a6478; display: flex; align-items: center; justify-content: center; flex: 15; }
+.win-eat { background: #0a1f18; color: #5ad4a0; display: flex; align-items: center; justify-content: center; flex: 9; }
+.tl-dot { width: 10px; height: 10px; border-radius: 50%; margin: 0 auto 4px; }
+.tl-line { flex: 1; height: 1px; background: #2a3040; margin-top: -17px; }
+.grocery-row { display: flex; justify-content: space-between; align-items: center; padding: 11px 14px; margin-bottom: 6px; cursor: pointer; border-radius: 12px; border: 1px solid #2a3040; background: #1a1f2e; transition: opacity .2s; user-select: none; }
+.grocery-row:hover { background: #22293a; }
+.grocery-row.checked { opacity: .35; }
+.check-circle { width: 22px; height: 22px; border-radius: 50%; border: 1.5px solid #3a4555; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-right: 12px; }
+.check-circle.done { background: #0a1f18; border-color: #1D9E75; }
+.check-tick { display: none; width: 10px; height: 6px; border-left: 2px solid #5ad4a0; border-bottom: 2px solid #5ad4a0; transform: rotate(-45deg) translate(1px,-1px); }
+.check-circle.done .check-tick { display: block; }
+.reset-btn { background: none; border: 1px solid #2a3040; border-radius: 8px; padding: 6px 14px; font-size: 12px; color: #7a8599; cursor: pointer; }
+.reset-btn:hover { background: #22293a; }
+.real-badge { font-size: 10px; background: #0a1f18; color: #5ad4a0; border-radius: 4px; padding: 1px 6px; margin-left: 6px; font-weight: 700; }
+
+/* Scan tab styles */
+.scan-camera-btn { width: 100%; padding: 40px 20px; border-radius: 12px; border: 2px dashed #2a3040; background: #1a1f2e; color: #7a8599; font-size: 16px; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 10px; transition: border-color .2s, background .2s; }
+.scan-camera-btn:hover { border-color: #d4a853; background: #22293a; }
+.scan-camera-btn .cam-icon { font-size: 48px; }
+.scan-preview { max-width: 200px; border-radius: 8px; margin: 14px auto; display: block; border: 1px solid #2a3040; }
+.scan-analyze-btn { width: 100%; padding: 14px; border-radius: 10px; border: none; background: #d4a853; color: #0f1117; font-size: 15px; font-weight: 700; cursor: pointer; margin-bottom: 14px; }
+.scan-analyze-btn:hover { background: #e0b86a; }
+.scan-analyze-btn:disabled { opacity: .5; cursor: not-allowed; }
+.scan-spinner { display: inline-block; width: 18px; height: 18px; border: 2px solid #0f1117; border-top-color: transparent; border-radius: 50%; animation: spin .8s linear infinite; vertical-align: middle; margin-right: 8px; }
+@keyframes spin { to { transform: rotate(360deg); } }
+.scan-results-card { background: #1a1f2e; border: 1px solid #2a3040; border-radius: 12px; padding: 16px; margin-bottom: 14px; }
+.scan-item-row { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #1e2535; font-size: 14px; }
+.scan-item-row:last-child { border-bottom: none; }
+.scan-update-btn { width: 100%; padding: 12px; border-radius: 10px; border: none; background: #0a1f18; color: #5ad4a0; font-size: 14px; font-weight: 700; cursor: pointer; border: 1px solid #1D9E75; margin-bottom: 8px; }
+.scan-update-btn:hover { background: #0d2a20; }
+.scan-budget-btn { width: 100%; padding: 12px; border-radius: 10px; border: none; background: #2a2010; color: #d4a853; font-size: 14px; font-weight: 700; cursor: pointer; border: 1px solid #d4a853; margin-bottom: 8px; }
+.scan-budget-btn:hover { background: #352a15; }
+.api-key-modal { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,.7); display: flex; align-items: center; justify-content: center; z-index: 1000; }
+.api-key-box { background: #1a1f2e; border: 1px solid #2a3040; border-radius: 16px; padding: 24px; max-width: 360px; width: 90%; }
+.api-key-input { width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #2a3040; background: #0f1117; color: #e8e0d0; font-size: 14px; margin: 12px 0; }
+.api-key-save { width: 100%; padding: 12px; border-radius: 10px; border: none; background: #d4a853; color: #0f1117; font-size: 15px; font-weight: 700; cursor: pointer; }
+.change-key-link { font-size: 12px; color: #5a6478; text-align: center; cursor: pointer; margin-top: 14px; text-decoration: underline; }
+
+/* Budget tab styles */
+.budget-summary-card { background: #1a1f2e; border: 1px solid #2a3040; border-radius: 12px; padding: 18px; margin-bottom: 14px; }
+.budget-month-nav { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
+.budget-month-nav button { background: none; border: 1px solid #2a3040; border-radius: 8px; padding: 6px 14px; color: #7a8599; cursor: pointer; font-size: 16px; }
+.budget-month-nav button:hover { background: #22293a; }
+.budget-month-label { font-size: 16px; font-weight: 700; color: #e8e0d0; }
+.budget-big-number { font-size: 32px; font-weight: 700; color: #d4a853; margin-bottom: 4px; }
+.budget-usd { font-size: 14px; color: #7a8599; margin-bottom: 14px; }
+.budget-progress-bar { height: 10px; background: #0f1117; border-radius: 5px; overflow: hidden; margin-bottom: 10px; border: 1px solid #1e2535; }
+.budget-progress-fill { height: 100%; border-radius: 5px; transition: width .3s; }
+.budget-target-row { display: flex; align-items: center; gap: 8px; font-size: 13px; color: #7a8599; margin-bottom: 14px; }
+.budget-target-row input { width: 80px; padding: 4px 8px; border-radius: 6px; border: 1px solid #2a3040; background: #0f1117; color: #d4a853; font-size: 14px; font-weight: 700; text-align: right; }
+.budget-edit-icon { cursor: pointer; font-size: 14px; }
+.budget-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 14px; }
+.budget-stat { background: #0f1117; border: 1px solid #1e2535; border-radius: 8px; padding: 10px; text-align: center; }
+.budget-stat-val { font-size: 16px; font-weight: 700; color: #5a9fd4; }
+.budget-stat-label { font-size: 10px; color: #5a6478; text-transform: uppercase; letter-spacing: .5px; margin-top: 2px; }
+.budget-add-btn { width: 100%; padding: 14px; border-radius: 10px; border: 2px dashed #2a3040; background: none; color: #7a8599; font-size: 15px; font-weight: 600; cursor: pointer; margin-bottom: 14px; }
+.budget-add-btn:hover { border-color: #d4a853; color: #d4a853; }
+.budget-form { background: #1a1f2e; border: 1px solid #2a3040; border-radius: 12px; padding: 16px; margin-bottom: 14px; }
+.budget-form input, .budget-form input[type="date"] { width: 100%; padding: 10px 12px; border-radius: 8px; border: 1px solid #2a3040; background: #0f1117; color: #e8e0d0; font-size: 14px; margin-bottom: 10px; }
+.budget-form-actions { display: flex; gap: 8px; }
+.budget-form-actions button { flex: 1; padding: 10px; border-radius: 8px; border: none; font-size: 14px; font-weight: 700; cursor: pointer; }
+.budget-save-btn { background: #d4a853; color: #0f1117; }
+.budget-cancel-btn { background: none; border: 1px solid #2a3040 !important; color: #7a8599; }
+.budget-entry-row { display: flex; justify-content: space-between; align-items: center; padding: 12px 14px; margin-bottom: 6px; border-radius: 12px; border: 1px solid #2a3040; background: #1a1f2e; position: relative; overflow: hidden; }
+.budget-entry-info { flex: 1; min-width: 0; }
+.budget-entry-date { font-size: 12px; color: #5a6478; }
+.budget-entry-note { font-size: 14px; color: #e8e0d0; font-weight: 600; }
+.budget-entry-amount { font-size: 16px; font-weight: 700; color: #d4a853; margin-left: 12px; white-space: nowrap; }
+.budget-entry-delete { position: absolute; right: 0; top: 0; bottom: 0; width: 70px; background: #d47a5a; color: #fff; border: none; font-size: 13px; font-weight: 700; cursor: pointer; display: none; align-items: center; justify-content: center; }
+.budget-entry-row.show-delete .budget-entry-delete { display: flex; }
+.budget-empty { text-align: center; padding: 40px 20px; color: #5a6478; font-size: 14px; }
+
+/* Update banner */
+.update-banner { position: fixed; top: 0; left: 0; right: 0; background: #d4a853; color: #0f1117; text-align: center; padding: 12px; font-size: 14px; font-weight: 700; cursor: pointer; z-index: 2000; display: none; }
+</style>
+</head>
+<body>
+
+<div class="update-banner" id="update-banner" onclick="applyUpdate()">Update available — tap to refresh</div>
+
+<div style="background:linear-gradient(135deg,#1a1f2e,#0f1117);border-bottom:1px solid #2a3040;padding:28px 24px 20px">
+  <div style="max-width:720px;margin:0 auto">
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
+      <span style="font-size:22px">⚡</span>
+      <h1 style="font-size:22px;font-weight:700;color:#f0e6c8">Shred Protocol — Final Plan</h1>
+    </div>
+    <p style="font-size:12px;color:#7a8599;letter-spacing:2px;text-transform:uppercase;margin-bottom:14px">Bangkok · 3-Day · ~1,700 kcal · 12:00–21:00 · Induction + Microwave + Olive Spray</p>
+    <div class="window-bar" style="margin-bottom:14px">
+      <div class="win-fast">fasting 9pm → 12pm</div>
+      <div class="win-eat">eating 12pm – 9pm</div>
+    </div>
+    <div style="display:flex;align-items:center;margin-bottom:16px">
+      <div style="flex:1;text-align:center"><div class="tl-dot" style="background:#854F0B"></div><div style="font-size:10px;color:#5a6478">12:00 PM</div><div style="font-size:11px;font-weight:700;color:#e8e0d0">Oats + whey</div><div style="font-size:10px;color:#5a6478">pre-gym</div></div>
+      <div class="tl-line"></div>
+      <div style="flex:1;text-align:center"><div class="tl-dot" style="background:#0C447C"></div><div style="font-size:10px;color:#5a6478">1–2 PM</div><div style="font-size:11px;font-weight:700;color:#e8e0d0">GYM</div><div style="font-size:10px;color:#5a6478">train</div></div>
+      <div class="tl-line"></div>
+      <div style="flex:1;text-align:center"><div class="tl-dot" style="background:#085041"></div><div style="font-size:10px;color:#5a6478">3:30 PM</div><div style="font-size:11px;font-weight:700;color:#e8e0d0">Cajun chicken</div><div style="font-size:10px;color:#5a6478">post-workout</div></div>
+      <div class="tl-line"></div>
+      <div style="flex:1;text-align:center"><div class="tl-dot" style="background:#712B13"></div><div style="font-size:10px;color:#5a6478">8:30 PM</div><div style="font-size:11px;font-weight:700;color:#e8e0d0">Steak + eggs</div><div style="font-size:10px;color:#5a6478">close window</div></div>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px">
+      <div class="metric-card"><div style="font-size:10px;color:#5a6478;text-transform:uppercase;letter-spacing:1px">Meals/day</div><div style="font-size:18px;font-weight:700;color:#d4a853">3</div></div>
+      <div class="metric-card"><div style="font-size:10px;color:#5a6478;text-transform:uppercase;letter-spacing:1px">Daily kcal</div><div id="total-kcal" style="font-size:18px;font-weight:700;color:#d4a853">—</div></div>
+      <div class="metric-card"><div style="font-size:10px;color:#5a6478;text-transform:uppercase;letter-spacing:1px">Protein</div><div id="total-p" style="font-size:18px;font-weight:700;color:#d4a853">—</div></div>
+      <div class="metric-card"><div style="font-size:10px;color:#5a6478;text-transform:uppercase;letter-spacing:1px">Actual Cost</div><div id="total-cost" style="font-size:18px;font-weight:700;color:#d4a853">—</div></div>
+    </div>
+  </div>
+</div>
+
+<div style="background:#0f1117;border-bottom:1px solid #1e2535;padding:0 24px">
+  <div style="max-width:720px;margin:0 auto;display:flex;overflow-x:auto;-webkit-overflow-scrolling:touch">
+    <button class="tab-btn active" onclick="showTab('plan',this)">🗓 Plan</button>
+    <button class="tab-btn" onclick="showTab('grocery',this)">🛒 Grocery</button>
+    <button class="tab-btn" onclick="showTab('scan',this)">📷 Scan</button>
+    <button class="tab-btn" onclick="showTab('tips',this)">💡 Tips</button>
+    <button class="tab-btn" onclick="showTab('budget',this)">💰 Budget</button>
+  </div>
+</div>
+
+<div style="max-width:720px;margin:0 auto;padding:24px">
+  <div id="tab-plan">
+    <div style="display:flex;gap:8px;margin-bottom:16px">
+      <button class="day-btn active" onclick="showDay(0,this)">Day 1</button>
+      <button class="day-btn" onclick="showDay(1,this)">Day 2</button>
+      <button class="day-btn" onclick="showDay(2,this)">Day 3</button>
+    </div>
+    <div id="day-content"></div>
+  </div>
+  <div id="tab-grocery" style="display:none">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+      <div>
+        <div style="font-size:10px;color:#5a6478;text-transform:uppercase;letter-spacing:1px;margin-bottom:2px">Actual 3-Day Cost <span class="real-badge">from receipts</span></div>
+        <div style="font-size:24px;font-weight:700;color:#d4a853" id="grocery-total">—</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px">
+        <div id="check-counter" style="font-size:12px;color:#7a8599">0 / 17 got</div>
+        <button class="reset-btn" onclick="resetAll()">Reset</button>
+      </div>
+    </div>
+    <div style="background:#0a1f18;border:1px solid #1D9E75;border-radius:8px;padding:10px 14px;margin-bottom:14px;font-size:12px;color:#5ad4a0;line-height:1.6">
+      Prices updated from CP AXTRA + Tops Food Hall receipts — 19 March 2026.
+    </div>
+    <div id="grocery-content"></div>
+  </div>
+  <div id="tab-scan" style="display:none">
+    <div id="scan-content"></div>
+  </div>
+  <div id="tab-tips" style="display:none"><div id="tips-content"></div></div>
+  <div id="tab-budget" style="display:none">
+    <div id="budget-content"></div>
+  </div>
+</div>
+
+<script>
+const meals=[
+  {key:"oats",label:"Meal 1 — Oats, whey & fruit",time:"12:00 PM",role:"Pre-gym — carbs + protein, eat 45–60 min before training",kcal:430,p:38,c:52,f:7,
+    ingredients:[
+      ["Rolled oats 60g","Whey protein 1 scoop (~30g)","Banana 1 whole","Blueberries 80g","Water 200ml","Pinch of salt"],
+      ["Rolled oats 60g","Whey protein 1 scoop (~30g)","Banana 1 whole","Korean strawberries 80g","Water 200ml","Pinch of salt"],
+      ["Rolled oats 60g","Whey protein 1 scoop (~30g)","Banana 1 whole","Blueberries 60g + strawberries 40g","Water 200ml","Pinch of salt"],
+    ],
+    seasoning:["No sugar, no milk — whey adds its own flavour and sweetness.","Stir whey in AFTER microwaving — never microwave the powder itself.","If whey is unflavoured, add a pinch of cinnamon for taste."],
+    howto:["Add oats 60g + water 200ml + pinch of salt into a microwave-safe bowl.","Microwave on high 2–2.5 min. Watch it — can bubble up. Stop and stir halfway.","Take out. Let cool 60 seconds before adding whey.","Stir in 1 scoop whey powder until fully mixed and smooth. No lumps.","Slice banana directly in. Add berries on top cold — do not microwave the fruit.","Eat immediately. Head to gym 45–60 min later."],
+    tip:"Always stir whey into warm oats after cooking — not before. Cooking protein powder makes it clump and go rubbery. 60 sec cool time is all it needs."
+  },
+  {key:"cajun",label:"Meal 2 — Cajun chicken",time:"3:30 PM",role:"Post-workout — protein + carbs for muscle recovery",kcal:600,p:58,c:48,f:12,
+    ingredients:[
+      ["Chicken breast 220g","Sweet potato 200g","Green beans 150g","Olive oil spray 2–3 sprays","Lemon ½","Salt + cracked pepper"],
+      ["Chicken breast 220g","Sweet potato 180g","Asparagus 150g","Olive oil spray 2–3 sprays","Lemon ½","Salt + cracked pepper"],
+      ["Chicken breast 250g","Sweet potato 200g","Green beans 150g","Olive oil spray 2–3 sprays","Lemon ½","Salt + cracked pepper"],
+    ],
+    seasoning:["Cajun spice mix — buy at Tops/Villa, OR DIY in 30 sec:","1 tsp paprika · ½ tsp garlic powder · ½ tsp onion powder · ¼ tsp cayenne · ½ tsp salt · ¼ tsp black pepper","Rub generously all over the chicken before it hits the pan."],
+    howto:["Sweet potato — peel, cube into 3cm chunks, pot of cold salted water, bring to boil, 15–18 min until fork-tender. Drain.","Pat chicken completely dry with paper towel. Rub cajun spice all over every side.","Induction hob on high. Spray 2–3 times with olive oil spray. Let it heat up.","Chicken in. Do not move it. Sear 4–5 min first side until golden crust forms.","Flip once. 4–5 min second side. Check no pink inside. Remove, rest 2 min.","Same pan: spray once more, toss green beans or asparagus 3–4 min until slightly charred. Salt + pepper.","Plate everything. Squeeze lemon over chicken and veg."],
+    tip:"Induction hob gets screaming hot fast — perfect for a proper sear. 2–3 sprays = ~15 kcal. Batch cook all 3 breasts on prep day and store sliced."
+  },
+  {key:"steak",label:"Meal 3 — Steak, eggs & avocado",time:"8:30 PM",role:"Close the window — high protein, healthy fat, low carb",kcal:680,p:57,c:10,f:46,
+    ingredients:[
+      ["Sirloin steak 200g","Eggs 2 whole","Avocado 1 whole","Olive oil spray 1–2 sprays","Lemon ½","Salt + cracked black pepper"],
+      ["Sirloin steak 200g","Eggs 2 whole","Avocado 1 whole","Olive oil spray 1–2 sprays","Lemon ½","Salt + cracked black pepper"],
+      ["Sirloin steak 200g","Eggs 2 whole","Avocado ½","Olive oil spray 1–2 sprays","Lemon ½","Salt + cracked black pepper"],
+    ],
+    seasoning:["Salt and cracked black pepper only — season both sides right before the pan.","Optional: rub a cut garlic clove over the steak after cooking.","Avocado: salt + lemon only."],
+    howto:["Take steak out of fridge 10 min early. Pat completely dry with paper towel — critical for a proper sear.","Season both sides with salt + pepper right before cooking.","Induction hob on MAX. Spray 1–2 times with olive oil spray. Wait until very hot.","Steak in. Do not move. 2–3 min first side for a deep brown crust.","Flip once. 2–3 min second side. Add 30 sec per side for well done.","Remove. REST 3 MIN — do not cut yet. Keeps all the juices inside.","Turn heat to medium-low. Spray pan once. Crack eggs in.","2 min for runny yolk. Cover with lid or plate for set yolk.","Halve avocado, remove stone, season with salt + lemon.","Slice steak, plate with eggs and avocado. Squeeze lemon over everything."],
+    tip:"Induction on max = perfect sear every time. 1–2 sprays for steak, 1 spray for eggs. ~20 kcal total — negligible."
+  }
+];
+
+const total=meals.reduce((a,m)=>({kcal:a.kcal+m.kcal,p:a.p+m.p,c:a.c+m.c,f:a.f+m.f}),{kcal:0,p:0,c:0,f:0});
+
+const grocery=[
+  {cat:"Protein", items:[
+    {id:"g0", name:"Chicken breast skinless", qty:"1.2 kg (3×450g packs)", price:237, note:"CP AXTRA — ฿79/pack", real:true},
+    {id:"g1", name:"Lean sirloin steak", qty:"600g (2 pieces)", price:278, note:"Tops — estimated, not yet bought", real:false},
+    {id:"g2", name:"Eggs whole", qty:"10 pack No.4", price:64, note:"CP AXTRA — CP EGG No.4", real:true},
+    {id:"g3", name:"Whey protein powder", qty:"1 tub / sachets", price:0, note:"Buy separately — Tops, Makro, Lazada, Shopee", real:false},
+  ]},
+  {cat:"Fats", items:[
+    {id:"g4", name:"Avocado", qty:"4 medium", price:278, note:"Tops Food Hall — ฿139 each", real:true},
+    {id:"g5", name:"Olive oil spray", qty:"1 can", price:120, note:"Tops / Villa — lasts weeks", real:false},
+  ]},
+  {cat:"Carbs & grains", items:[
+    {id:"g6", name:"Sweet potato", qty:"1 kg", price:110, note:"CP AXTRA — ฿110/kg", real:true},
+    {id:"g7", name:"Rolled oats (Harrowgate)", qty:"1 pack", price:139, note:"Tops Food Hall", real:true},
+    {id:"g8", name:"Bananas", qty:"1 pack", price:65, note:"CP AXTRA — Lotus's brand", real:true},
+  ]},
+  {cat:"Vegetables", items:[
+    {id:"g9",  name:"Green beans", qty:"1 pack", price:33, note:"CP AXTRA — OHF brand", real:true},
+    {id:"g10", name:"Asparagus", qty:"200g", price:60, note:"Tops / Lotus's — estimated", real:false},
+  ]},
+  {cat:"Fruits", items:[
+    {id:"g11", name:"Korean strawberries", qty:"1 pack", price:159, note:"CP AXTRA — ลดวเบอร์รี่เกาหลี", real:true},
+    {id:"g12", name:"Jumbo blueberries", qty:"125g", price:99, note:"CP AXTRA — บลูเบอร์รี่จัมโบ้", real:true},
+  ]},
+  {cat:"Pantry & spices", items:[
+    {id:"g13", name:"Cajun seasoning", qty:"1 pack", price:55, note:"Tops/Villa — or DIY mix", real:false},
+    {id:"g14", name:"Lime juice", qty:"250ml", price:16, note:"CP AXTRA — ASR brand", real:true},
+    {id:"g15", name:"Garlic + black pepper", qty:"1 pack", price:15, note:"Wet market", real:false},
+    {id:"g16", name:"Salt", qty:"1 pack", price:10, note:"Any shop", real:false},
+  ]},
+];
+
+const allItems=grocery.flatMap(c=>c.items);
+const actualTotal=allItems.reduce((s,i)=>s+i.price,0);
+const checked=new Set();
+
+function toggleItem(id){
+  checked.has(id)?checked.delete(id):checked.add(id);
+  const done=checked.has(id);
+  document.getElementById('row-'+id).classList.toggle('checked',done);
+  document.getElementById('circle-'+id).classList.toggle('done',done);
+  document.getElementById('name-'+id).style.textDecoration=done?'line-through':'';
+  document.getElementById('check-counter').textContent=checked.size+' / '+allItems.length+' got';
+}
+
+function resetAll(){
+  checked.clear();
+  allItems.forEach(item=>{
+    document.getElementById('row-'+item.id).classList.remove('checked');
+    document.getElementById('circle-'+item.id).classList.remove('done');
+    document.getElementById('name-'+item.id).style.textDecoration='';
+  });
+  document.getElementById('check-counter').textContent='0 / '+allItems.length+' got';
+}
+
+function renderGrocery(){
+  let html='';
+  grocery.forEach(cat=>{
+    html+=`<div style="margin-bottom:14px"><div style="font-size:11px;color:#5a6478;font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:7px">${cat.cat}</div>`;
+    cat.items.forEach(item=>{
+      html+=`<div id="row-${item.id}" class="grocery-row" onclick="toggleItem('${item.id}')">
+        <div style="display:flex;align-items:center;flex:1;min-width:0">
+          <div id="circle-${item.id}" class="check-circle"><div class="check-tick"></div></div>
+          <div style="min-width:0">
+            <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
+              <span id="name-${item.id}" style="font-size:14px;font-weight:600;color:#e8e0d0">${item.name}</span>
+              ${item.real?'<span class="real-badge">real price</span>':''}
+            </div>
+            <div style="font-size:12px;color:#5a6478;margin-top:2px">${item.qty} · ${item.note}</div>
+          </div>
+        </div>
+        <div style="font-size:15px;font-weight:700;color:#d4a853;min-width:50px;text-align:right;margin-left:12px">${item.price>0?'฿'+item.price:'—'}</div>
+      </div>`;
+    });
+    html+=`</div>`;
+  });
+  document.getElementById('grocery-content').innerHTML=html;
+  document.getElementById('grocery-total').textContent='฿'+actualTotal+' (~$'+(actualTotal/31).toFixed(0)+' USD)';
+}
+
+const tips=["You have an induction hob — it gets screaming hot instantly. Perfect for steak and chicken sear. Use max heat for both.","Always stir whey into warm oats AFTER microwaving. Never microwave the powder — it clumps and ruins the texture.","Eat meal 1 (oats + whey) 45–60 min before training. Carbs need time to digest.","Eat meal 2 (cajun chicken) within 30–60 min after training — your anabolic window. Most important meal of the day.","Meal 3 is low carb by design. Steak + eggs + avocado keeps insulin flat overnight while growth hormone peaks during sleep.","Batch cook on prep day: boil all sweet potato → cook all 3 chicken breasts. 40 min total. Only steak + eggs fresh each evening.","Pat all protein completely dry before the pan. Moisture = steam = grey meat. Dry = sear = crust and flavour.","DIY cajun mix takes 30 sec: paprika, garlic powder, onion powder, cayenne, salt, pepper. Make a big batch.","Moccona black coffee during the morning fast is perfect — no milk, no sugar. Helps suppress hunger and boosts fat oxidation.","Drink 3–3.5L water daily. Bangkok heat dehydrates fast."];
+
+function toggleMeal(id){
+  const body=document.getElementById('body-'+id);
+  const chev=document.getElementById('chev-'+id);
+  const open=body.classList.contains('open');
+  body.classList.toggle('open',!open);
+  chev.textContent=open?'▼':'▲';
+}
+
+function renderDay(i){
+  let html=`<div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-bottom:14px">
+    <div class="metric-card"><div style="font-size:10px;color:#5a6478">kcal</div><div style="font-size:16px;font-weight:700;color:#d4a853">${total.kcal}</div></div>
+    <div class="metric-card"><div style="font-size:10px;color:#5a6478">protein</div><div style="font-size:16px;font-weight:700;color:#5a9fd4">${total.p}g</div></div>
+    <div class="metric-card"><div style="font-size:10px;color:#5a6478">carbs</div><div style="font-size:16px;font-weight:700;color:#5ad4a0">${total.c}g</div></div>
+    <div class="metric-card"><div style="font-size:10px;color:#5a6478">fat</div><div style="font-size:16px;font-weight:700;color:#d47a5a">${total.f}g</div></div>
+  </div>`;
+  meals.forEach(m=>{
+    const id=m.key+i;
+    const ing=getMealIngredients(meals.indexOf(m), i);
+    html+=`<div class="card">
+      <div class="meal-header" onclick="toggleMeal('${id}')">
+        <div style="flex:1">
+          <div style="display:flex;align-items:center;gap:6px;margin-bottom:4px">
+            <span style="font-size:14px;font-weight:700;color:#e8e0d0">${m.label}</span>
+            <span id="chev-${id}" class="chevron">▼</span>
+          </div>
+          <div style="font-size:12px;color:#5a6478">${m.time} · ${m.role}</div>
+        </div>
+        <span class="badge badge-amber" style="margin-left:12px;white-space:nowrap">${m.kcal} kcal</span>
+      </div>
+      <div id="body-${id}" class="meal-body">
+        <div class="section-label">Ingredients</div>
+        <ul>${ing.map(it=>`<li>${it}</li>`).join('')}</ul>
+        <div class="section-label">Seasoning</div>
+        <ul>${m.seasoning.map(s=>`<li>${s}</li>`).join('')}</ul>
+        <div class="section-label">How to cook — induction + microwave</div>
+        <ol>${m.howto.map(s=>`<li>${s}</li>`).join('')}</ol>
+        <div class="tip-box">${m.tip}</div>
+        <div style="border-top:1px solid #2a3040;margin-top:12px;padding-top:10px;display:flex;gap:8px">
+          <span class="badge badge-blue">P ${m.p}g</span>
+          <span class="badge badge-teal">C ${m.c}g</span>
+          <span class="badge badge-coral">F ${m.f}g</span>
+        </div>
+      </div>
+    </div>`;
+  });
+  document.getElementById('day-content').innerHTML=html;
+}
+
+function renderTips(){
+  document.getElementById('tips-content').innerHTML=tips.map(t=>`<div class="card" style="font-size:13px;color:#b0a898;line-height:1.6;margin-bottom:8px;padding:12px 14px">${t}</div>`).join('');
+}
+
+function showTab(tab,btn){
+  ['plan','grocery','scan','tips','budget'].forEach(t=>document.getElementById('tab-'+t).style.display=t===tab?'block':'none');
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  if(tab==='scan') renderScanTab();
+  if(tab==='budget') renderBudgetTab();
+}
+
+function showDay(i,btn){
+  document.querySelectorAll('.day-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  renderDay(i);
+}
+
+// ============================================================
+// SCAN TAB — connected to Claude for auto-updating everything
+// ============================================================
+let scanImageData = null;
+let scanMediaType = null;
+let lastScanResults = null;
+
+// Plan ingredient overrides stored in localStorage
+function getPlanOverrides(){
+  return JSON.parse(localStorage.getItem('plan_overrides') || '{}');
+}
+function savePlanOverrides(o){
+  localStorage.setItem('plan_overrides', JSON.stringify(o));
+}
+function getMealIngredients(mealIndex, dayIndex){
+  const overrides = getPlanOverrides();
+  const key = meals[mealIndex].key + '_' + dayIndex;
+  return overrides[key] || meals[mealIndex].ingredients[dayIndex];
+}
+
+function buildScanSystemPrompt(){
+  const groceryNames = allItems.map(i => i.name).join(', ');
+  const mealInfo = meals.map(m => m.key + ': ' + m.ingredients[0].join(', ')).join('\n');
+  return `You are a smart receipt analyzer for a meal prep app called Shred Protocol. The user follows a 3-day meal plan in Bangkok.
+
+GROCERY LIST ITEMS: ${groceryNames}
+
+MEAL PLAN INGREDIENTS:
+${mealInfo}
+
+Analyze this Thai supermarket receipt. Return ONLY valid JSON, no markdown, no explanation.
+
+Format:
+{
+  "items": [{ "name": "item name in english", "price": 0.00 }],
+  "total": 0.00,
+  "grocery_updates": [{ "grocery_id": "g0", "new_price": 0, "new_qty": "qty text", "new_note": "store name" }],
+  "plan_updates": [{ "meal": "oats|cajun|steak", "days": [0,1,2], "ingredient_index": 0, "new_ingredient": "new text" }]
+}
+
+Rules for grocery_updates:
+- Match receipt items to grocery list items by name (fuzzy match OK)
+- Use these IDs: ${allItems.map(i => i.id + '=' + i.name).join(', ')}
+- Only include items that clearly match
+
+Rules for plan_updates:
+- If a receipt item is a substitution for a plan ingredient (e.g. pork instead of chicken, broccoli instead of green beans), suggest updating the ingredient
+- If the receipt shows a different quantity than planned, update the ingredient text
+- Only suggest changes when the receipt clearly shows a different item was bought for that meal slot
+- days array = which days to apply the change (0,1,2)
+- ingredient_index = position in the ingredients array for that meal
+
+If no plan changes are needed, return empty plan_updates array.`;
+}
+
+function renderScanTab(){
+  const hasKey = !!localStorage.getItem('anthropic_key');
+  if(!hasKey) showApiKeyModal();
+  let html = '';
+  html += `<input type="file" id="scan-file-input" accept="image/*" capture="environment" style="display:none" onchange="handleScanFile(this)">`;
+  html += `<button class="scan-camera-btn" onclick="document.getElementById('scan-file-input').click()">
+    <span class="cam-icon">📷</span>
+    <span>Tap to scan a receipt</span>
+  </button>`;
+  html += `<div id="scan-preview-area"></div>`;
+  html += `<div id="scan-results-area"></div>`;
+  html += `<div class="change-key-link" onclick="showApiKeyModal()">Change API Key</div>`;
+  document.getElementById('scan-content').innerHTML = html;
+}
+
+function showApiKeyModal(){
+  const existing = document.getElementById('api-key-modal');
+  if(existing) existing.remove();
+  const modal = document.createElement('div');
+  modal.className = 'api-key-modal';
+  modal.id = 'api-key-modal';
+  const currentKey = localStorage.getItem('anthropic_key') || '';
+  modal.innerHTML = `<div class="api-key-box">
+    <div style="font-size:16px;font-weight:700;color:#e8e0d0;margin-bottom:4px">Anthropic API Key</div>
+    <div style="font-size:13px;color:#7a8599">Enter your API key to use receipt scanning</div>
+    <input class="api-key-input" id="api-key-field" type="password" placeholder="sk-ant-..." value="${currentKey}">
+    <button class="api-key-save" onclick="saveApiKey()">Save</button>
+    <div style="text-align:center;margin-top:10px"><span style="font-size:13px;color:#5a6478;cursor:pointer" onclick="document.getElementById('api-key-modal').remove()">Cancel</span></div>
+  </div>`;
+  document.body.appendChild(modal);
+}
+
+function saveApiKey(){
+  const key = document.getElementById('api-key-field').value.trim();
+  if(key){ localStorage.setItem('anthropic_key', key); }
+  document.getElementById('api-key-modal').remove();
+}
+
+function handleScanFile(input){
+  const file = input.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = function(e){
+    const dataUrl = e.target.result;
+    const parts = dataUrl.split(',');
+    scanImageData = parts[1];
+    const mimeMatch = parts[0].match(/data:(.*?);/);
+    scanMediaType = mimeMatch ? mimeMatch[1] : 'image/jpeg';
+    const preview = document.getElementById('scan-preview-area');
+    preview.innerHTML = `<img src="${dataUrl}" class="scan-preview">
+      <button class="scan-analyze-btn" id="scan-analyze-btn" onclick="analyzeReceipt()">Analyze Receipt</button>`;
+    document.getElementById('scan-results-area').innerHTML = '';
+    lastScanResults = null;
+  };
+  reader.readAsDataURL(file);
+}
+
+async function analyzeReceipt(){
+  const key = localStorage.getItem('anthropic_key');
+  if(!key){ showApiKeyModal(); return; }
+  const btn = document.getElementById('scan-analyze-btn');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="scan-spinner"></span>Reading receipt...';
+  document.getElementById('scan-results-area').innerHTML = '';
+  try {
+    const resp = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': key,
+        'anthropic-version': '2023-06-01',
+        'anthropic-dangerous-direct-browser-access': 'true'
+      },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 2048,
+        system: buildScanSystemPrompt(),
+        messages: [{
+          role: 'user',
+          content: [
+            { type: 'image', source: { type: 'base64', media_type: scanMediaType, data: scanImageData } },
+            { type: 'text', text: 'Analyze this receipt. Match items to my grocery list and meal plan. Return the structured JSON.' }
+          ]
+        }]
+      })
+    });
+    const data = await resp.json();
+    if(data.error) throw new Error(data.error.message);
+    const text = data.content[0].text;
+    const parsed = JSON.parse(text);
+    lastScanResults = parsed;
+    applyAllUpdates(parsed);
+  } catch(err) {
+    document.getElementById('scan-results-area').innerHTML = `<div class="card" style="padding:14px;color:#d47a5a;font-size:13px">Error: ${err.message}</div>`;
+    btn.disabled = false;
+    btn.innerHTML = 'Analyze Receipt';
+  }
+}
+
+function applyAllUpdates(parsed){
+  const items = parsed.items || [];
+  const groceryUpdates = parsed.grocery_updates || [];
+  const planUpdates = parsed.plan_updates || [];
+  const receiptTotal = parsed.total || items.reduce((s,i) => s + (i.price||0), 0);
+
+  // 1. Update grocery prices
+  let groceryCount = 0;
+  groceryUpdates.forEach(gu => {
+    const item = allItems.find(i => i.id === gu.grocery_id);
+    if(item){
+      if(gu.new_price != null) item.price = Math.round(gu.new_price);
+      if(gu.new_qty) item.qty = gu.new_qty;
+      item.note = gu.new_note || 'Updated from receipt scan';
+      item.real = true;
+      groceryCount++;
+    }
+  });
+  if(groceryCount > 0){
+    renderGrocery();
+    const newTotal = allItems.reduce((s,i) => s + i.price, 0);
+    document.getElementById('total-cost').textContent = '฿' + newTotal;
+  }
+
+  // 2. Update meal plan ingredients
+  let planCount = 0;
+  if(planUpdates.length > 0){
+    const overrides = getPlanOverrides();
+    planUpdates.forEach(pu => {
+      const mealIdx = meals.findIndex(m => m.key === pu.meal);
+      if(mealIdx === -1) return;
+      const days = pu.days || [0,1,2];
+      days.forEach(d => {
+        const key = meals[mealIdx].key + '_' + d;
+        if(!overrides[key]) overrides[key] = [...meals[mealIdx].ingredients[d]];
+        if(pu.ingredient_index >= 0 && pu.ingredient_index < overrides[key].length){
+          overrides[key][pu.ingredient_index] = pu.new_ingredient;
+          planCount++;
+        }
+      });
+    });
+    savePlanOverrides(overrides);
+    // Re-render current day
+    const activeDay = document.querySelector('.day-btn.active');
+    const dayIdx = activeDay ? [...document.querySelectorAll('.day-btn')].indexOf(activeDay) : 0;
+    renderDay(dayIdx);
+  }
+
+  // 3. Auto-log to budget
+  const today = new Date().toISOString().split('T')[0];
+  const entries = JSON.parse(localStorage.getItem('budget_entries') || '[]');
+  entries.push({
+    id: Date.now().toString(),
+    date: today,
+    amount: Math.round(receiptTotal),
+    note: 'Receipt scan ' + today,
+    items: items.map(i => i.name)
+  });
+  localStorage.setItem('budget_entries', JSON.stringify(entries));
+
+  // 4. Render summary
+  renderScanSummary(items, receiptTotal, groceryCount, planCount, planUpdates);
+}
+
+function renderScanSummary(items, total, groceryCount, planCount, planUpdates){
+  let html = '';
+
+  // Receipt items card
+  html += '<div class="scan-results-card">';
+  html += '<div style="font-size:11px;color:#5a6478;font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px">Receipt Items</div>';
+  items.forEach(item => {
+    html += `<div class="scan-item-row"><span style="color:#e8e0d0">${item.name}</span><span style="color:#d4a853;font-weight:700">฿${(item.price||0).toFixed(0)}</span></div>`;
+  });
+  html += `<div style="border-top:1px solid #2a3040;margin-top:8px;padding-top:8px;display:flex;justify-content:space-between;font-weight:700">
+    <span style="color:#e8e0d0">Total</span><span style="color:#d4a853">฿${Math.round(total)}</span></div>`;
+  html += '</div>';
+
+  // Auto-update summary
+  html += '<div style="font-size:11px;color:#5a6478;font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin:14px 0 8px">Auto-Updated</div>';
+
+  // Grocery update
+  html += `<div style="background:#0a1f18;border:1px solid #1D9E75;border-radius:10px;padding:12px 14px;margin-bottom:8px;display:flex;align-items:center;gap:10px">
+    <span style="font-size:20px">🛒</span>
+    <div><div style="font-size:14px;font-weight:600;color:#5ad4a0">Grocery List</div>
+    <div style="font-size:12px;color:#7a8599">${groceryCount > 0 ? groceryCount + ' price' + (groceryCount!==1?'s':'') + ' updated' : 'No matching items'}</div></div>
+  </div>`;
+
+  // Budget update
+  html += `<div style="background:#2a2010;border:1px solid #d4a853;border-radius:10px;padding:12px 14px;margin-bottom:8px;display:flex;align-items:center;gap:10px">
+    <span style="font-size:20px">💰</span>
+    <div><div style="font-size:14px;font-weight:600;color:#d4a853">Budget</div>
+    <div style="font-size:12px;color:#7a8599">Logged ฿${Math.round(total)} to this month</div></div>
+  </div>`;
+
+  // Plan update
+  if(planCount > 0){
+    html += `<div style="background:#0c1a2e;border:1px solid #5a9fd4;border-radius:10px;padding:12px 14px;margin-bottom:8px;display:flex;align-items:center;gap:10px">
+      <span style="font-size:20px">🗓</span>
+      <div><div style="font-size:14px;font-weight:600;color:#5a9fd4">Meal Plan</div>
+      <div style="font-size:12px;color:#7a8599">${planCount} ingredient${planCount!==1?'s':''} updated</div>
+      ${planUpdates.map(pu => `<div style="font-size:11px;color:#5a6478;margin-top:2px">• ${pu.meal}: ${pu.new_ingredient}</div>`).join('')}
+      </div>
+    </div>`;
+  } else {
+    html += `<div style="background:#0c1a2e;border:1px solid #5a9fd4;border-radius:10px;padding:12px 14px;margin-bottom:8px;display:flex;align-items:center;gap:10px">
+      <span style="font-size:20px">🗓</span>
+      <div><div style="font-size:14px;font-weight:600;color:#5a9fd4">Meal Plan</div>
+      <div style="font-size:12px;color:#7a8599">No changes needed</div></div>
+    </div>`;
+  }
+
+  // Scan another button
+  html += `<button class="scan-camera-btn" style="padding:16px;margin-top:10px" onclick="document.getElementById('scan-file-input').click()">
+    <span style="font-size:24px">📷</span><span>Scan another receipt</span>
+  </button>`;
+
+  document.getElementById('scan-results-area').innerHTML = html;
+
+  // Reset the analyze button
+  const btn = document.getElementById('scan-analyze-btn');
+  if(btn){ btn.disabled = false; btn.innerHTML = 'Analyze Receipt'; }
+}
+
+// ============================================================
+// BUDGET TAB
+// ============================================================
+let budgetViewYear, budgetViewMonth;
+(function(){
+  const now = new Date();
+  budgetViewYear = now.getFullYear();
+  budgetViewMonth = now.getMonth();
+})();
+
+function getBudgetTarget(){
+  return parseInt(localStorage.getItem('budget_target') || '3000', 10);
+}
+
+function getBudgetEntries(){
+  return JSON.parse(localStorage.getItem('budget_entries') || '[]');
+}
+
+function saveBudgetEntries(entries){
+  localStorage.setItem('budget_entries', JSON.stringify(entries));
+}
+
+function getMonthEntries(entries, year, month){
+  return entries.filter(e => {
+    const d = new Date(e.date);
+    return d.getFullYear() === year && d.getMonth() === month;
+  }).sort((a,b) => b.date.localeCompare(a.date) || b.id - a.id);
+}
+
+function renderBudgetTab(){
+  const entries = getBudgetEntries();
+  const monthEntries = getMonthEntries(entries, budgetViewYear, budgetViewMonth);
+  const target = getBudgetTarget();
+  const spent = monthEntries.reduce((s,e) => s + e.amount, 0);
+  const pct = target > 0 ? Math.min(100, (spent / target) * 100) : 0;
+  const barColor = pct > 90 ? '#d47a5a' : pct > 70 ? '#d4a853' : '#5ad4a0';
+  const monthNames = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+
+  // Stats
+  const now = new Date();
+  const daysInMonth = new Date(budgetViewYear, budgetViewMonth + 1, 0).getDate();
+  const currentDay = (budgetViewYear === now.getFullYear() && budgetViewMonth === now.getMonth()) ? now.getDate() : daysInMonth;
+  const daysLeft = (budgetViewYear === now.getFullYear() && budgetViewMonth === now.getMonth()) ? daysInMonth - currentDay : 0;
+  const weeksElapsed = Math.max(1, Math.ceil(currentDay / 7));
+  const avgPerWeek = monthEntries.length > 0 ? Math.round(spent / weeksElapsed) : 0;
+  const biggest = monthEntries.length > 0 ? Math.max(...monthEntries.map(e => e.amount)) : 0;
+
+  let html = '';
+  // Month nav
+  html += `<div class="budget-summary-card">`;
+  html += `<div class="budget-month-nav">
+    <button onclick="budgetPrevMonth()">←</button>
+    <span class="budget-month-label">${monthNames[budgetViewMonth]} ${budgetViewYear}</span>
+    <button onclick="budgetNextMonth()">→</button>
+  </div>`;
+  html += `<div class="budget-big-number">฿${spent.toLocaleString()}</div>`;
+  html += `<div class="budget-usd">~$${(spent/31).toFixed(0)} USD</div>`;
+  html += `<div class="budget-progress-bar"><div class="budget-progress-fill" style="width:${pct}%;background:${barColor}"></div></div>`;
+  html += `<div class="budget-target-row">
+    <span>Budget:</span>
+    <span id="budget-target-display" onclick="editBudgetTarget()">฿${target.toLocaleString()} <span class="budget-edit-icon">✏️</span></span>
+    <span id="budget-target-edit" style="display:none">฿<input type="number" id="budget-target-input" value="${target}" onblur="saveBudgetTarget()" onkeydown="if(event.key==='Enter')saveBudgetTarget()"></span>
+    <span style="margin-left:auto;color:${pct>90?'#d47a5a':'#5a6478'}">${pct.toFixed(0)}% used</span>
+  </div>`;
+  // Stats row
+  html += `<div class="budget-stats">
+    <div class="budget-stat"><div class="budget-stat-val">฿${avgPerWeek.toLocaleString()}</div><div class="budget-stat-label">Avg/week</div></div>
+    <div class="budget-stat"><div class="budget-stat-val">฿${biggest.toLocaleString()}</div><div class="budget-stat-label">Biggest shop</div></div>
+    <div class="budget-stat"><div class="budget-stat-val">${daysLeft}</div><div class="budget-stat-label">Days left</div></div>
+  </div>`;
+  html += `</div>`;
+
+  // Add button / form
+  html += `<button class="budget-add-btn" id="budget-add-btn" onclick="showBudgetForm()">＋ Add Purchase</button>`;
+  html += `<div id="budget-form-area"></div>`;
+
+  // Entries
+  html += `<div id="budget-entries-list">`;
+  if(monthEntries.length === 0){
+    html += `<div class="budget-empty">No purchases this month. Tap + to add one.</div>`;
+  } else {
+    monthEntries.forEach(entry => {
+      html += renderBudgetEntry(entry);
+    });
+  }
+  html += `</div>`;
+
+  document.getElementById('budget-content').innerHTML = html;
+}
+
+function renderBudgetEntry(entry){
+  const d = new Date(entry.date + 'T00:00:00');
+  const dateStr = d.toLocaleDateString('en-GB', {day:'numeric', month:'short'});
+  return `<div class="budget-entry-row" id="bentry-${entry.id}" ontouchstart="budgetTouchStart(event,'${entry.id}')" ontouchend="budgetTouchEnd(event,'${entry.id}')" oncontextmenu="budgetLongPress(event,'${entry.id}')">
+    <div class="budget-entry-info">
+      <div class="budget-entry-date">${dateStr}</div>
+      <div class="budget-entry-note">${entry.note || 'Purchase'}</div>
+    </div>
+    <div class="budget-entry-amount">฿${entry.amount.toLocaleString()}</div>
+    <button class="budget-entry-delete" onclick="deleteBudgetEntry('${entry.id}')">Delete</button>
+  </div>`;
+}
+
+let budgetTouchTimer = null;
+let budgetTouchStartX = 0;
+
+function budgetTouchStart(e, id){
+  budgetTouchStartX = e.touches[0].clientX;
+  budgetTouchTimer = setTimeout(() => {
+    document.getElementById('bentry-'+id).classList.toggle('show-delete');
+  }, 500);
+}
+
+function budgetTouchEnd(e, id){
+  clearTimeout(budgetTouchTimer);
+  if(e.changedTouches && e.changedTouches[0]){
+    const dx = budgetTouchStartX - e.changedTouches[0].clientX;
+    if(dx > 60){
+      document.getElementById('bentry-'+id).classList.add('show-delete');
+    } else if(dx < -30){
+      document.getElementById('bentry-'+id).classList.remove('show-delete');
+    }
+  }
+}
+
+function budgetLongPress(e, id){
+  e.preventDefault();
+  document.getElementById('bentry-'+id).classList.toggle('show-delete');
+}
+
+function deleteBudgetEntry(id){
+  let entries = getBudgetEntries().filter(e => e.id !== id);
+  saveBudgetEntries(entries);
+  renderBudgetTab();
+}
+
+function showBudgetForm(){
+  const today = new Date().toISOString().split('T')[0];
+  document.getElementById('budget-form-area').innerHTML = `<div class="budget-form">
+    <input type="number" id="bf-amount" placeholder="Amount (฿)" inputmode="decimal">
+    <input type="text" id="bf-note" placeholder="Note (e.g. CP AXTRA weekly shop)">
+    <input type="date" id="bf-date" value="${today}">
+    <div class="budget-form-actions">
+      <button class="budget-cancel-btn" onclick="document.getElementById('budget-form-area').innerHTML=''">Cancel</button>
+      <button class="budget-save-btn" onclick="saveBudgetEntry()">Save</button>
+    </div>
+  </div>`;
+  document.getElementById('bf-amount').focus();
+}
+
+function saveBudgetEntry(){
+  const amount = parseFloat(document.getElementById('bf-amount').value);
+  const note = document.getElementById('bf-note').value.trim();
+  const date = document.getElementById('bf-date').value;
+  if(!amount || amount <= 0) return;
+  const entries = getBudgetEntries();
+  entries.push({ id: Date.now().toString(), date: date, amount: Math.round(amount), note: note || 'Purchase', items: [] });
+  saveBudgetEntries(entries);
+  renderBudgetTab();
+}
+
+function editBudgetTarget(){
+  document.getElementById('budget-target-display').style.display = 'none';
+  document.getElementById('budget-target-edit').style.display = '';
+  document.getElementById('budget-target-input').focus();
+}
+
+function saveBudgetTarget(){
+  const val = parseInt(document.getElementById('budget-target-input').value, 10);
+  if(val > 0) localStorage.setItem('budget_target', val.toString());
+  renderBudgetTab();
+}
+
+function budgetPrevMonth(){
+  budgetViewMonth--;
+  if(budgetViewMonth < 0){ budgetViewMonth = 11; budgetViewYear--; }
+  renderBudgetTab();
+}
+
+function budgetNextMonth(){
+  budgetViewMonth++;
+  if(budgetViewMonth > 11){ budgetViewMonth = 0; budgetViewYear++; }
+  renderBudgetTab();
+}
+
+// ============================================================
+// INIT
+// ============================================================
+document.getElementById('total-kcal').textContent=total.kcal;
+document.getElementById('total-p').textContent=total.p+'g';
+document.getElementById('total-cost').textContent='฿'+actualTotal;
+renderDay(0); renderGrocery(); renderTips();
+
+// ============================================================
+// SERVICE WORKER
+// ============================================================
+if('serviceWorker' in navigator){
+  navigator.serviceWorker.register('./sw.js').then(reg => {
+    reg.addEventListener('updatefound', () => {
+      const newWorker = reg.installing;
+      newWorker.addEventListener('statechange', () => {
+        if(newWorker.state === 'installed' && navigator.serviceWorker.controller){
+          document.getElementById('update-banner').style.display = 'block';
+        }
+      });
+    });
+  });
+  // Check version.txt for updates
+  fetch('./version.txt').then(r => r.text()).then(v => {
+    const serverVersion = v.trim();
+    const localVersion = localStorage.getItem('app_version') || '1.0.0';
+    if(serverVersion !== localVersion){
+      localStorage.setItem('app_version', serverVersion);
+      if(navigator.serviceWorker.controller){
+        document.getElementById('update-banner').style.display = 'block';
+      }
+    }
+  }).catch(() => {});
+}
+
+function applyUpdate(){
+  if(navigator.serviceWorker.controller){
+    navigator.serviceWorker.controller.postMessage('skipWaiting');
+  }
+  navigator.serviceWorker.addEventListener('controllerchange', () => {
+    window.location.reload();
+  });
+  // Fallback reload
+  setTimeout(() => window.location.reload(), 1000);
+}
+</script>
+</body>
+</html>
